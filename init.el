@@ -1,6 +1,6 @@
-;(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-;                         ("marmalade" . "http://marmalade-repo.org/packages/")
-;                         ("melpa" . "http://melpa.milkbox.net/packages/")))
+;;(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+;;                         ("marmalade" . "http://marmalade-repo.org/packages/")
+;;                         ("melpa" . "http://melpa.milkbox.net/packages/")))
 (require 'package)
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
@@ -13,13 +13,21 @@
 (package-install 'multiple-cursors)
 (recentf-mode t)
 (ido-mode t)
+(line-number-mode t)
+(column-number-mode t)
 (set-face-attribute 'default nil :font "consolas-11:weight=normal")
+
 (defun my-delete-region (&optional arg)
   (interactive "p")
+  ;; if using region, delete region
+  (if (use-region-p) (progn (delete-forward-char 1) (return nil)) )
+  ;; else delete current line
   (setq is-line-end (= (line-end-position) (point-max)))
   (setq start (if is-line-end (- (line-beginning-position) 1) (line-beginning-position)))
+  (setq start (if (< start (point-min)) (point-min) start))
   (setq end (if is-line-end (line-end-position) (+ 1 (line-end-position))))
   (delete-region start end)
   )
+
 (global-set-key (kbd "C-k") 'my-delete-region)
 (global-set-key (kbd "M-x") 'smex)
